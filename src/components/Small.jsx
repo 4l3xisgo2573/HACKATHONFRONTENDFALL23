@@ -28,6 +28,7 @@ const LineGraph = ({ data }) => {
 function Small() {
   const [apiData, setApiData] = useState(null);
   const [apiLabels, setApiLabels] = useState(null);
+  const [isEmpty, setIsEmpty] = useState(null);
 
   useEffect(() => {
     getData();
@@ -48,6 +49,9 @@ function Small() {
 
         setApiData(lastEightValues);
         setApiLabels(lastEightLabels);
+        setIsEmpty(apiData && apiData[0].reading_1 > 6 || apiData[0].reading_1 < 2);
+        // const isEmpty = apiData && apiData[0].reading_1 > 6 || apiData[0].reading_1 < 2;
+        console.log(isEmpty);
       })
       .catch(err => {
         console.log(err);
@@ -59,9 +63,23 @@ function Small() {
     values: apiData || [65, 59, 80, 81, 56], 
   };
 
+  
+
+
+
+
   return (
     <div className="content">
       <h2 className="type-title">Small Container</h2>
+      <div className="status">
+        <div className="status-text">
+          <h3 className="status-title">Status</h3>
+          <p className="status-value">{isEmpty ? 'Empty' : 'Full'}</p>
+        </div>
+        <div className="status-icon">
+          <i className={`fas fa-${isEmpty ? 'check-circle' : 'exclamation-circle'}`}></i>
+        </div>
+      </div>
       <LineGraph data={graphData} />
       <table>
         <thead>

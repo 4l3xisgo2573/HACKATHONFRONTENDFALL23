@@ -1,5 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+
 const deviceContainers = {
   1: {
     img: "https://static.thenounproject.com/png/5650167-200.png",
@@ -20,10 +23,45 @@ const deviceContainers = {
 function Devices() {
   const renderDeviceContainer = (key) => {
     const { img, name,address } = deviceContainers[key];
+
+    const [apiData, setApiData] = useState(null);
+    const [apiLabels, setApiLabels] = useState(null);
+    const [isEmpty, setIsEmpty] = useState(null);
+
+    useEffect(() => {
+      getData();
+    }, []);
+
+    const getData = () => {
+      axios.get('https://containers_api-1-x8955756.deta.app/logs/1')
+        .then(res => {
+          const sortedData = res.data
+            .map(item => ({
+              reading: item.reading_1,
+              timestamp: new Date(item.timestamp),
+            }))
+            .sort((a, b) => b.timestamp-a.timestamp);
+  
+          const lastEightValues = sortedData.map(item => item.reading).slice(-8);
+          const lastEightLabels = sortedData.map(item => item.timestamp.toISOString()).slice(-8);
+  
+          setApiData(lastEightValues);
+          setApiLabels(lastEightLabels);
+          console.log(apiData);
+          setIsEmpty(apiData && apiData[0].reading_1 > 6 || apiData[0].reading_1 < 2);
+          // const isEmpty = apiData && apiData[0].reading_1 > 6 || apiData[0].reading_1 < 2;
+          // console.log(isEmpty);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    };
+
     return (<div>
         <Link to={address} style={{ textDecoration: "none" }}><div key={key} className="devices">
         <img src={img} alt={"Device ${key}"}></img>
         <h3>{name}</h3>
+        <p>Empty: {isEmpty}</p>
       </div></Link>
     </div>
         
