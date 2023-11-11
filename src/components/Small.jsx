@@ -41,7 +41,7 @@ function Small() {
             reading: item.reading_1,
             timestamp: new Date(item.timestamp),
           }))
-          .sort((a, b) => a.timestamp - b.timestamp);
+          .sort((a, b) => b.timestamp-a.timestamp);
 
         const lastEightValues = sortedData.map(item => item.reading).slice(-8);
         const lastEightLabels = sortedData.map(item => item.timestamp.toISOString()).slice(-8);
