@@ -13,7 +13,6 @@ const LineGraph = ({ data }) => {
         lineTension: 0,
         backgroundColor: 'rgba(75,192,192,0.4)',
         borderColor: 'rgba(75,192,192,1)',
-        // ... (rest of your dataset properties)
         data: data.values,
       },
     ],
@@ -37,6 +36,7 @@ function DeviceScreen() {
     axios.get('https://containers_api-1-x8955756.deta.app/logs/1 ')
       .then(res => {
         setApiData(res);
+        console.log(res)
       })
       .catch(err => {
         console.log(err);
