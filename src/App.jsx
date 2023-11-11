@@ -10,15 +10,14 @@ import Home from "./components/Home";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Devices from "./components/Devices";
-import Big from "./components/big";
-import Small from "./components/small";
+import Big from "./components/Big";
+import Small from "./components/Small";
 
 
 function App() {
   return (
     <>
       <div className="container">
-      
         <Router>
           <Header></Header>
           <Routes>
