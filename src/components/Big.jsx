@@ -37,22 +37,26 @@ function Big() {
   const getData = () => {
     axios.get('https://containers_api-1-x8955756.deta.app/logs/1')
       .then(res => {
-        const arrayOfValues = res.data.map(item => item.reading_1);
-        const arrayOfValues2 = res.data.map(item => item.reading_2);
-        const arrayOftags = res.data.map(item => item.timestamp);
-  
-        const lastTenValues = arrayOfValues.slice(-8);
-        const lastTenLabels = arrayOftags.slice(-8);
-        const lastTenValues2=arrayOfValues2.slice(-8);
-        setApiData(lastTenValues);
-        setApiLabels(lastTenLabels);
-        setApiData2(lastTenValues2);
+        const sortedData = res.data
+          .map(item => ({
+            reading1: item.reading_1,
+            reading2: item.reading_2,
+            timestamp: new Date(item.timestamp),
+          }))
+          .sort((a, b) => b.timestamp - a.timestamp);
+
+        const lastEightValues = sortedData.map(item => item.reading1).slice(-8);
+        const lastEightValues2 = sortedData.map(item => item.reading2).slice(-8);
+        const lastEightLabels = sortedData.map(item => item.timestamp.toLocaleString()).slice(-8);
+
+        setApiData(lastEightValues);
+        setApiData2(lastEightValues2);
+        setApiLabels(lastEightLabels);
       })
       .catch(err => {
         console.log(err);
       });
   };
-  
 
   const graphData = {
     labels: apiLabels || ['January', 'February', 'March', 'April', 'May'],
