@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 
 const deviceContainers = {
   1: {
@@ -14,15 +13,16 @@ const deviceContainers = {
     name: "Small Container",
     address:"/small"
   },
-  3: {
-    img: "https://static.thenounproject.com/png/5650167-200.png",
-    name: "Add Another Device",
-    address:"/add"
-  },
+  // 3: {
+  //   img: "https://static.thenounproject.com/png/5650167-200.png",
+  //   name: "Add Another Device",
+  //   address:"/add"
+  // },
 };
+
 function Devices() {
   const renderDeviceContainer = (key) => {
-    const { img, name,address } = deviceContainers[key];
+    const { img, name, address } = deviceContainers[key];
 
     const [apiData, setApiData] = useState(null);
     const [apiLabels, setApiLabels] = useState(null);
@@ -40,49 +40,43 @@ function Devices() {
               reading: item.reading_1,
               timestamp: new Date(item.timestamp),
             }))
-            .sort((a, b) => b.timestamp-a.timestamp);
+            .sort((a, b) => b.timestamp - a.timestamp);
   
           const lastEightValues = sortedData.map(item => item.reading).slice(-8);
-          const lastEightLabels = sortedData.map(item => item.timestamp.toISOString()).slice(-8);
   
           setApiData(lastEightValues);
-          setApiLabels(lastEightLabels);
-          console.log(apiData);
-          setIsEmpty(apiData && apiData[0].reading_1 > 6 || apiData[0].reading_1 < 2);
-          // const isEmpty = apiData && apiData[0].reading_1 > 6 || apiData[0].reading_1 < 2;
-          // console.log(isEmpty);
+
+          const isEmptyValue = lastEightValues && lastEightValues[0] > 6 || lastEightValues[0] < 2;
+          setIsEmpty(isEmptyValue);
         })
         .catch(err => {
           console.log(err);
         });
     };
 
-    return (<div>
-        <Link to={address} style={{ textDecoration: "none" }}><div key={key} className="devices">
-        <img src={img} alt={"Device ${key}"}></img>
-        <h3>{name}</h3>
-        <p>Empty: {isEmpty}</p>
-      </div></Link>
-    </div>
-        
-      
+    return (
+      <div>
+        <Link to={address} style={{ textDecoration: "none" }}>
+          <div key={key} className="devices">
+            <img src={img} alt={`Device ${key}`} />
+            <div className="device-info">
+              <h3>{name}</h3>
+              <p  className="margin-left: 10px;">
+                Status: <br />
+                {isEmpty ? 'Empty' : 'Full'}
+              </p>
+            </div>
+          </div>
+        </Link>
+      </div>
     );
   };
+
   return (
     <div className="content">
       {Object.keys(deviceContainers).map((key) => renderDeviceContainer(key))}
     </div>
   );
 }
+
 export default Devices;
-
-<Link to="/" style={{ textDecoration: "none" }} >
-  <div>
-    <img
-      className="footer-icon"
-      src="src/images/iconmonstr-home-7-240.png"
-      alt="Home"
-    />
-  </div>
-</Link>
-

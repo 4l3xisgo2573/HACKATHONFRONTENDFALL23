@@ -25,54 +25,53 @@ const LineGraph = ({ data }) => {
   );
 };
 
-function Small() {
-  const [apiData, setApiData] = useState(null);
-  const [apiLabels, setApiLabels] = useState(null);
-  const [isEmpty, setIsEmpty] = useState(null);
+const Small = () => {
+  const [apiData, setApiData] = useState([]);
+  const [apiLabels, setApiLabels] = useState([]);
+  const [isEmpty, setIsEmpty] = useState(false);
 
   useEffect(() => {
     getData();
   }, []);
 
   const getData = () => {
-    axios.get('https://containers_api-1-x8955756.deta.app/logs/1')
+    axios.get('https://containers_api-1-x8955756.deta.app/logs/0')
       .then(res => {
         const sortedData = res.data
           .map(item => ({
-            reading: item.reading_1,
+            reading: ((item.readings || item.reading_1)/100).toFixed(2),
             timestamp: new Date(item.timestamp),
           }))
-          .sort((a, b) => b.timestamp-a.timestamp);
-
+          .sort((a, b) => b.timestamp - a.timestamp);
+        
+        for (let i = 0; i < sortedData.length; i++) {
+          console.log(sortedData[i].reading);
+        }
         const lastEightValues = sortedData.map(item => item.reading).slice(-8);
-        const lastEightLabels = sortedData.map(item => item.timestamp.toISOString()).slice(-8);
+        const lastEightLabels = sortedData.map(item => item.timestamp.toLocaleString()).slice(-8);
 
         setApiData(lastEightValues);
         setApiLabels(lastEightLabels);
-        setIsEmpty(apiData && apiData[0].reading_1 > 6 || apiData[0].reading_1 < 2);
-        // const isEmpty = apiData && apiData[0].reading_1 > 6 || apiData[0].reading_1 < 2;
-        console.log(isEmpty);
+
+        const isEmptyValue = lastEightValues && lastEightValues[0] > 6 || lastEightValues[0] < 2;
+        setIsEmpty(isEmptyValue);
       })
       .catch(err => {
         console.log(err);
+        // Handle the error gracefully, e.g., set an error state or display an error message.
       });
   };
 
   const graphData = {
-    labels: apiLabels || ['January', 'February', 'March', 'April', 'May'],
-    values: apiData || [65, 59, 80, 81, 56], 
+    labels: apiLabels || [],
+    values: apiData || [], 
   };
-
-  
-
-
-
 
   return (
     <div className="content">
       <h2 className="type-title">Small Container</h2>
       <div className="status">
-        <div className="status-text">
+        <div className="type-title">
           <h3 className="status-title">Status</h3>
           <p className="status-value">{isEmpty ? 'Empty' : 'Full'}</p>
         </div>
@@ -100,6 +99,5 @@ function Small() {
     </div>
   );
 }
-
 
 export default Small;

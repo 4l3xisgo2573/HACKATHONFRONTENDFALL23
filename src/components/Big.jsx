@@ -19,16 +19,17 @@ const LineGraph = ({ data }) => {
   };
 
   return (
-    <div >
-      <Line data={chartData}  />
+    <div>
+      <Line data={chartData} />
     </div>
   );
 };
 
-function Big() {
-  const [apiData, setApiData] = useState(null);
-  const [apiLabels, setApiLabels] = useState(null);
-  const [apiData2, setApiData2] = useState(null);
+const Big = () => {
+  const [apiData, setApiData] = useState([]);
+  const [apiData2, setApiData2] = useState([]);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const [apiLabels, setApiLabels] = useState([]);
 
   useEffect(() => {
     getData();
@@ -52,27 +53,34 @@ function Big() {
         setApiData(lastEightValues);
         setApiData2(lastEightValues2);
         setApiLabels(lastEightLabels);
+
+        setIsEmpty(lastEightValues && lastEightValues[0] > 6 || lastEightValues[0] < 2);
       })
       .catch(err => {
         console.log(err);
+        // Handle the error gracefully, e.g., set an error state or display an error message.
       });
-  };
-
-  const graphData = {
-    labels: apiLabels || ['January', 'February', 'March', 'April', 'May'],
-    values: apiData || [65, 59, 80, 81, 56], 
   };
 
   return (
     <div className="content">
       <h2 className="type-title">Big Container</h2>
-      <LineGraph data={graphData} />
+      <div className="status">
+        <div className="type-title">
+          <h3 className="status-title">Status</h3>
+          <p className="status-value">{isEmpty ? 'Empty' : 'Full'}</p>
+        </div>
+        <div className="status-icon">
+          <i className={`fas fa-${isEmpty ? 'check-circle' : 'exclamation-circle'}`}></i>
+        </div>
+      </div>
+      <LineGraph data={{ labels: apiLabels, values: apiData }} />
       <table>
         <thead>
           <tr>
             <th>Timestamp</th>
-            <th>Reading 1</th>
-            <th>Reading 2</th>
+            <th>Bottom Sensor</th>
+            <th>Top Sensor</th>
           </tr>
         </thead>
         <tbody>
