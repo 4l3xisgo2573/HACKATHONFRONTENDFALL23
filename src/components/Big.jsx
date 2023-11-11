@@ -25,26 +25,34 @@ const LineGraph = ({ data }) => {
   );
 };
 
-function DeviceScreen() {
+function Big() {
   const [apiData, setApiData] = useState(null);
+  const [apiLabels, setApiLabels] = useState(null);
 
   useEffect(() => {
     getData();
   }, []);
 
   const getData = () => {
-    axios.get('https://containers_api-1-x8955756.deta.app/logs/1 ')
-      .then(res => {
-        setApiData(res);
-        console.log(res)
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    axios.get('https://containers_api-1-x8955756.deta.app/logs/1')
+    .then(res => {
+      // Assuming res.data is an array of objects similar to your provided example
+      const arrayOfValues = res.data.map(item => item.reading_1);
+      const arrayOftags = res.data.map(item => item.timestamp);
+      
+      // Set the arrayOfValues to setApiData
+      setApiData(arrayOfValues);
+      setApiLabels(arrayOftags);
+      
+      //console.log(arrayOfValues); // Optionally log the array of values
+    })
+    .catch(err => {
+      console.log(err);
+    });
   };
 
   const graphData = {
-    labels: ['January', 'February', 'March', 'April', 'May'],
+    labels: apiLabels || ['January', 'February', 'March', 'April', 'May'],
     values: apiData || [65, 59, 80, 81, 56], 
   };
 
@@ -58,4 +66,4 @@ function DeviceScreen() {
   );
 }
 
-export default DeviceScreen;
+export default Big;

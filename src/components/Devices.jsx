@@ -4,17 +4,17 @@ const deviceContainers = {
   1: {
     img: "https://static.thenounproject.com/png/5650167-200.png",
     name: "Big Container",
-    address:"/bigContainer"
+    address:"/big"
   },
   2: {
     img: "https://static.thenounproject.com/png/5650167-200.png",
     name: "Small Container",
-    address:"/smallContainer"
+    address:"/small"
   },
   3: {
     img: "https://static.thenounproject.com/png/5650167-200.png",
     name: "Add Another Device",
-    address:"/smallContainer"
+    address:"/add"
   },
 };
 function Devices() {
