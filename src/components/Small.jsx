@@ -34,22 +34,25 @@ function Small() {
   }, []);
 
   const getData = () => {
-    axios.get('https://containers_api-1-x8955756.deta.app/logs/0')
+    axios.get('https://containers_api-1-x8955756.deta.app/logs/1')
       .then(res => {
-        const arrayOfValues = res.data.map(item => item.reading_1);
-        const arrayOftags = res.data.map(item => item.timestamp);
-  
-        const lastTenValues = arrayOfValues.slice(-8);
-        const lastTenLabels = arrayOftags.slice(-8);
-  
-        setApiData(lastTenValues);
-        setApiLabels(lastTenLabels);
+        const sortedData = res.data
+          .map(item => ({
+            reading: item.reading_1,
+            timestamp: new Date(item.timestamp),
+          }))
+          .sort((a, b) => a.timestamp - b.timestamp);
+
+        const lastEightValues = sortedData.map(item => item.reading).slice(-8);
+        const lastEightLabels = sortedData.map(item => item.timestamp.toISOString()).slice(-8);
+
+        setApiData(lastEightValues);
+        setApiLabels(lastEightLabels);
       })
       .catch(err => {
         console.log(err);
       });
   };
-  
 
   const graphData = {
     labels: apiLabels || ['January', 'February', 'March', 'April', 'May'],
@@ -79,5 +82,6 @@ function Small() {
     </div>
   );
 }
+
 
 export default Small;
