@@ -4,7 +4,7 @@ import React from "react";
 function Header() {
   return (
     <div className="header">
-      <h1>APP NAME</h1>
+      <img class ="app-logo" src ="src\images\logo_text.png" alt = "App Logo"></img>
     </div>
   );
 }

@@ -11,8 +11,8 @@ const LineGraph = ({ data }) => {
         label: 'Small Container',
         fill: false,
         lineTension: 0,
-        backgroundColor: 'rgba(75,192,192,0.4)',
-        borderColor: 'rgba(75,192,192,1)',
+        backgroundColor: 'rgb(180, 0, 180)',
+        borderColor: 'rgb(180, 0, 180)',
         data: data.values,
       },
     ],
@@ -28,6 +28,7 @@ const LineGraph = ({ data }) => {
 function Small() {
   const [apiData, setApiData] = useState(null);
   const [apiLabels, setApiLabels] = useState(null);
+
   useEffect(() => {
     getData();
   }, []);
@@ -35,20 +36,20 @@ function Small() {
   const getData = () => {
     axios.get('https://containers_api-1-x8955756.deta.app/logs/0')
       .then(res => {
-        // Assuming res.data is an array of objects similar to your provided example
         const arrayOfValues = res.data.map(item => item.reading_1);
         const arrayOftags = res.data.map(item => item.timestamp);
-        
-        // Set the arrayOfValues to setApiData
-        setApiData(arrayOfValues);
-        setApiLabels(arrayOftags);
-        
-        //console.log(arrayOfValues); // Optionally log the array of values
+  
+        const lastTenValues = arrayOfValues.slice(-8);
+        const lastTenLabels = arrayOftags.slice(-8);
+  
+        setApiData(lastTenValues);
+        setApiLabels(lastTenLabels);
       })
       .catch(err => {
         console.log(err);
       });
   };
+  
 
   const graphData = {
     labels: apiLabels || ['January', 'February', 'March', 'April', 'May'],
@@ -59,8 +60,22 @@ function Small() {
     <div className="content">
       <h2 className="type-title">Small Container</h2>
       <LineGraph data={graphData} />
-      <p>Data from API: {apiData ? 'Loaded' : 'Loading...'}</p>
-      <h2>You are currently low </h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Reading Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {apiLabels && apiData && apiLabels.map((label, index) => (
+            <tr key={index}>
+              <td>{label}</td>
+              <td>{apiData[index]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

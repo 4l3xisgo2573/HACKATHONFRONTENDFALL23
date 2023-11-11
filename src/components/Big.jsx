@@ -11,16 +11,16 @@ const LineGraph = ({ data }) => {
         label: 'Big Container',
         fill: false,
         lineTension: 0,
-        backgroundColor: 'rgba(75,192,192,0.4)',
-        borderColor: 'rgba(75,192,192,1)',
+        backgroundColor: 'rgb(180, 0, 180)',
+        borderColor: 'rgb(180, 0, 180)',
         data: data.values,
       },
     ],
   };
 
   return (
-    <div>
-      <Line data={chartData} />
+    <div >
+      <Line data={chartData}  />
     </div>
   );
 };
@@ -28,6 +28,7 @@ const LineGraph = ({ data }) => {
 function Big() {
   const [apiData, setApiData] = useState(null);
   const [apiLabels, setApiLabels] = useState(null);
+  const [apiData2, setApiData2] = useState(null);
 
   useEffect(() => {
     getData();
@@ -35,21 +36,23 @@ function Big() {
 
   const getData = () => {
     axios.get('https://containers_api-1-x8955756.deta.app/logs/1')
-    .then(res => {
-      // Assuming res.data is an array of objects similar to your provided example
-      const arrayOfValues = res.data.map(item => item.reading_1);
-      const arrayOftags = res.data.map(item => item.timestamp);
-      
-      // Set the arrayOfValues to setApiData
-      setApiData(arrayOfValues);
-      setApiLabels(arrayOftags);
-      
-      //console.log(arrayOfValues); // Optionally log the array of values
-    })
-    .catch(err => {
-      console.log(err);
-    });
+      .then(res => {
+        const arrayOfValues = res.data.map(item => item.reading_1);
+        const arrayOfValues2 = res.data.map(item => item.reading_2);
+        const arrayOftags = res.data.map(item => item.timestamp);
+  
+        const lastTenValues = arrayOfValues.slice(-8);
+        const lastTenLabels = arrayOftags.slice(-8);
+        const lastTenValues2=arrayOfValues2.slice(-8);
+        setApiData(lastTenValues);
+        setApiLabels(lastTenLabels);
+        setApiData2(lastTenValues2);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
+  
 
   const graphData = {
     labels: apiLabels || ['January', 'February', 'March', 'April', 'May'],
@@ -60,8 +63,24 @@ function Big() {
     <div className="content">
       <h2 className="type-title">Big Container</h2>
       <LineGraph data={graphData} />
-      <p>Data from API: {apiData ? 'Loaded' : 'Loading...'}</p>
-      <h2>You are currently low </h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Reading 1</th>
+            <th>Reading 2</th>
+          </tr>
+        </thead>
+        <tbody>
+          {apiLabels && apiData && apiData2 && apiLabels.map((label, index) => (
+            <tr key={index}>
+              <td>{label}</td>
+              <td>{apiData[index]}</td>
+              <td>{apiData2[index]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

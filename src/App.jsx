@@ -11,7 +11,6 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Devices from "./components/Devices";
 import Big from "./components/big";
-import { Link } from "react-router-dom"; // Add this import
 import Small from "./components/small";
 
 
